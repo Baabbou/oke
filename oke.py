@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 html_entities_dict = {char: '&'+code for code, char in entities.html5.items()}
 
 parser = ArgumentParser(description="OKÉ: A tool to convert anything into anything.")
-parser.add_argument("value", help="The value you need to encode (as a char by default).")
+parser.add_argument("value", help="The value you need to encode (as a char by default).", nargs="+")
 parser.add_argument("-c", "--char", help="The given input is a char.", action="store_true")
 parser.add_argument("-d", "--dec", help="The given input is a decimal.", action="store_true")
 parser.add_argument("-x", "--hex", help="The given input is a hex.", action="store_true")
@@ -21,6 +21,7 @@ def f(val: str) -> str:
 
 def translate_char(value: str) -> None:
     translations = []
+    translations.append([f("given"), value])
     translations.append([f("decimal"), f"{ord(value)}"])
     translations.append([f("hexadecimal"), "0x{:02x}".format(ord(value))])
     translations.append([f("byte"), "{:08b}".format(ord(value))])
@@ -44,39 +45,43 @@ def translate_dec(value: int) -> None:
 
 
 if __name__ == '__main__':
-    try:
-        if args.char:
-            if len(args.value) != 1:
-                print("[error] This tool can handle only 1 char...")
-                exit(1)
-            translate_char(args.value)
+    for value in args.value:
+        try:
+            if args.char:
+                if len(value) != 1:
+                    print("[error] Give it char by char pls.")
+                    exit(1)
+                translate_char(value)
 
-        elif args.dec:
-            try:
-                translate_dec(int(args.value, 10))
-            except ValueError:
-                print("[error] You didn't gave a valid decimal value.")
-                exit(1)
+            elif args.dec:
+                try:
+                    translate_dec(int(value, 10))
+                except ValueError:
+                    print("[error] You didn't gave a valid decimal value.")
+                    exit(1)
 
-        elif args.hex:
-            try:
-                translate_dec(int(args.value, 16))
-            except ValueError:
-                print("[error] You didn't gave a valid hex value.")
-                exit(1)
-        
-        elif args.byte:
-            try:
-                translate_dec(int(args.value, 2))
-            except ValueError:
-                print("[error] You didn't gave a valid byte.")
-                exit(1)
+            elif args.hex:
+                try:
+                    translate_dec(int(value, 16))
+                except ValueError:
+                    print("[error] You didn't gave a valid hex value.")
+                    exit(1)
 
-        else:
-            if len(args.value) != 1:
-                print("[error] This tool can handle only 1 char...")
-                exit(1)
-            translate_char(args.value)
-    except Exception as e:
-        print("[error] An error occured please specify the right type for your input.")
-        exit(1)
+            elif args.byte:
+                try:
+                    translate_dec(int(value, 2))
+                except ValueError:
+                    print("[error] You didn't gave a valid byte.")
+                    exit(1)
+
+            else:
+                if len(value) != 1:
+                    print("[error] This tool can handle only 1 char...")
+                    exit(1)
+                translate_char(value)
+        except Exception as e:
+            print("[error] An error occured please specify the right type for your input.")
+            exit(1)
+
+        if (args.value).index(value) != len(args.value)-1:
+            print()
