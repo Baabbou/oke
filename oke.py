@@ -77,16 +77,16 @@ if __name__ == '__main__':
         elif args.full_type == "8":
             translation = "".join([(html_entities_dict[c] if c in html_entities_dict else "&#x{:02x};".format(ord(c))).replace("&", "%26").replace("#", "%23").replace(";", "%3b") for c in value])
 
-        elif args.full_type == "7":
+        elif args.full_type == "9":
             translation = "".join([f"%26%23{ord(c)}%3b" for c in value])
 
-        elif args.full_type == "9":
+        elif args.full_type == "10":
             translation = "".join(["%26%23x{:02x}%3b".format(ord(c)) for c in value])
 
-        elif args.full_type == "10":
+        elif args.full_type == "11":
             translation = "".join(["\\u{:04x}".format(ord(c)) for c in value])
 
-        elif args.full_type == "11":
+        elif args.full_type == "12":
             translation = "".join(["%25{:02x}".format(ord(c)) for c in value])
 
         else:
